@@ -21,7 +21,7 @@ def homepage():
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Student API Docs | Swagger Style</title>
+        <title>Student API Docs | Test Interface</title>
         <style>
             body {
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -41,13 +41,36 @@ def homepage():
                 box-shadow: 0 2px 5px rgba(0,0,0,0.05);
                 border-radius: 8px;
             }
-            code {
+            code, textarea, input {
                 background: #eef;
-                padding: 3px 6px;
+                padding: 6px;
                 border-radius: 4px;
+                border: 1px solid #ccc;
+                width: 100%;
+                box-sizing: border-box;
             }
-            ul {
+            textarea {
+                height: 100px;
+            }
+            button {
+                background: #3498db;
+                color: white;
+                padding: 10px 15px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
                 margin-top: 10px;
+            }
+            button:hover {
+                background: #2980b9;
+            }
+            .response {
+                white-space: pre-wrap;
+                background: #eef;
+                margin-top: 10px;
+                padding: 10px;
+                border: 1px dashed #ccc;
+                font-family: monospace;
             }
             footer {
                 margin-top: 60px;
@@ -57,55 +80,111 @@ def homepage():
         </style>
     </head>
     <body>
-        <h1>📘 API Testing with Swagger Style</h1>
-
-        <p><strong>Last Updated:</strong> 28 Apr, 2025</p>
+        <h1>🎓 Student API Testing Interface</h1>
+        <p><strong>Base URL:</strong> {{ url }}</p>
 
         <div class="section">
-            <h2>🧠 Understanding APIs</h2>
-            <p>In the realm of software, applications often need to exchange information or trigger actions between systems. <strong>APIs act as messengers</strong>, allowing smooth and structured communication.</p>
-            <p><em>Example:</em> An e-commerce site may use an API to fetch product details from its database.</p>
+            <h2>📥 GET /students</h2>
+            <button onclick="getStudents()">Fetch Students</button>
+            <div id="getResponse" class="response"></div>
         </div>
 
         <div class="section">
-            <h2>🗺️ Swagger as the Map</h2>
-            <p>Swagger acts like a city map for APIs — showing every route (endpoint) available, what data can be requested, and what actions can be performed.</p>
-            <p>This standardized map helps developers understand and interact with the API effectively.</p>
+            <h2>➕ POST /students</h2>
+            <textarea id="postData">{ "name": "Alice", "age": 23 }</textarea>
+            <button onclick="postStudent()">Create Student</button>
+            <div id="postResponse" class="response"></div>
         </div>
 
         <div class="section">
-            <h2>🛠️ Leveraging Swagger for Testing</h2>
-            <p>When testing APIs, developers simulate tasks like retrieving data, updating information, or deleting records. Swagger provides an environment to:</p>
-            <ul>
-                <li>Send requests (e.g., <code>GET /students</code>)</li>
-                <li>Receive and verify API responses</li>
-                <li>Validate that parameters and behaviors are correct</li>
-            </ul>
+            <h2>✏️ PUT /students/&lt;id&gt;</h2>
+            <input type="text" id="putId" placeholder="Student ID">
+            <textarea id="putData">{ "name": "Bob", "age": 24 }</textarea>
+            <button onclick="putStudent()">Update Student</button>
+            <div id="putResponse" class="response"></div>
         </div>
 
         <div class="section">
-            <h2>✅ Example Endpoints (Base URL: <code>{{ url }}</code>)</h2>
-            <ul>
-                <li><code>GET /students</code> – List all students</li>
-                <li><code>POST /students</code> – Add a new student</li>
-                <li><code>GET /students/&lt;id&gt;</code> – Get student by ID</li>
-                <li><code>PUT /students/&lt;id&gt;</code> – Update student info</li>
-                <li><code>DELETE /students/&lt;id&gt;</code> – Remove a student</li>
-            </ul>
+            <h2>🗑️ DELETE /students/&lt;id&gt;</h2>
+            <input type="text" id="deleteId" placeholder="Student ID">
+            <button onclick="deleteStudent()">Delete Student</button>
+            <div id="deleteResponse" class="response"></div>
         </div>
 
         <div class="section">
-            <h2>🔍 Proactive Testing</h2>
-            <p>Swagger testing identifies issues early by simulating realistic scenarios. Just like navigating with a reliable map avoids dead ends, Swagger ensures all API routes function properly before reaching users.</p>
+            <h2>🔍 GET /students/&lt;id&gt;</h2>
+            <input type="text" id="getById" placeholder="Student ID">
+            <button onclick="getStudentById()">Get Student</button>
+            <div id="getByIdResponse" class="response"></div>
         </div>
 
         <footer>
-            &copy; 2025 Student API | Flask-powered RESTful Service with Swagger-style Documentation
+            &copy; 2025 Student API | Flask-powered RESTful Service
         </footer>
+
+        <script>
+            const base = "{{ url }}";
+
+            function getStudents() {
+                fetch(base + "/students")
+                    .then(res => res.json())
+                    .then(data => {
+                        document.getElementById("getResponse").innerText = JSON.stringify(data, null, 2);
+                    });
+            }
+
+            function postStudent() {
+                const body = document.getElementById("postData").value;
+                fetch(base + "/students", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: body
+                })
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("postResponse").innerText = JSON.stringify(data, null, 2);
+                });
+            }
+
+            function putStudent() {
+                const id = document.getElementById("putId").value;
+                const body = document.getElementById("putData").value;
+                fetch(base + "/students/" + id, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: body
+                })
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("putResponse").innerText = JSON.stringify(data, null, 2);
+                });
+            }
+
+            function deleteStudent() {
+                const id = document.getElementById("deleteId").value;
+                fetch(base + "/students/" + id, {
+                    method: "DELETE"
+                })
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("deleteResponse").innerText = JSON.stringify(data, null, 2);
+                });
+            }
+
+            function getStudentById() {
+                const id = document.getElementById("getById").value;
+                fetch(base + "/students/" + id)
+                    .then(res => res.json())
+                    .then(data => {
+                        document.getElementById("getByIdResponse").innerText = JSON.stringify(data, null, 2);
+                    });
+            }
+        </script>
     </body>
     </html>
     """
     return render_template_string(html, url=request.host_url.rstrip('/'))
+
 
 
 @app.route('/students', methods=['POST'])
