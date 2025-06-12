@@ -12,7 +12,7 @@ next_id = 2
 
 @app.route('/')
 def home():
-    return "Welcome to the Student API!"
+    return "Welcome this is my first testing of an API  orhhhhh"
 
 
 @app.route('/students', methods=['POST'])
