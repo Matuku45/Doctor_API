@@ -14,176 +14,152 @@ next_id = 2
 BASE_URL = "https://doctor-api-1-ac1h.onrender.com"
 
 
+
 @app.route('/')
 def homepage():
-    html = """
+    html = f"""
     <!DOCTYPE html>
     <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <title>Student API Docs | Test Interface</title>
+        <meta charset="UTF-8" />
+        <title>🎓 Student API Testing Interface</title>
         <style>
-            body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background-color: #f9f9f9;
-                padding: 40px;
-                line-height: 1.6;
+            body {{
+                font-family: Arial, sans-serif;
+                margin: 30px;
+                background: #f4f6f8;
+                color: #333;
+            }}
+            h1 {{
                 color: #2c3e50;
-            }
-            h1, h2 {
-                color: #34495e;
-            }
-            .section {
-                background-color: #fff;
-                border-left: 5px solid #3498db;
+            }}
+            .endpoint {{
+                background: #fff;
+                border-left: 5px solid #2980b9;
                 padding: 20px;
-                margin: 30px 0;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-                border-radius: 8px;
-            }
-            code, textarea, input {
-                background: #eef;
-                padding: 6px;
-                border-radius: 4px;
-                border: 1px solid #ccc;
+                margin-bottom: 20px;
+                border-radius: 6px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }}
+            .endpoint h2 {{
+                margin-top: 0;
+            }}
+            input, textarea {{
                 width: 100%;
-                box-sizing: border-box;
-            }
-            textarea {
-                height: 100px;
-            }
-            button {
-                background: #3498db;
+                padding: 8px;
+                margin: 5px 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-family: monospace;
+            }}
+            button {{
+                background: #2980b9;
                 color: white;
                 padding: 10px 15px;
                 border: none;
-                border-radius: 5px;
+                border-radius: 4px;
                 cursor: pointer;
-                margin-top: 10px;
-            }
-            button:hover {
-                background: #2980b9;
-            }
-            .response {
-                white-space: pre-wrap;
+            }}
+            pre {{
                 background: #eef;
-                margin-top: 10px;
                 padding: 10px;
-                border: 1px dashed #ccc;
-                font-family: monospace;
-            }
-            footer {
-                margin-top: 60px;
-                font-size: 13px;
-                color: #888;
-            }
+                border-radius: 4px;
+                overflow: auto;
+            }}
         </style>
     </head>
     <body>
         <h1>🎓 Student API Testing Interface</h1>
-        <p><strong>Base URL:</strong> {{ url }}</p>
+        <p><strong>Base URL:</strong> {BASE_URL}</p>
 
-        <div class="section">
+        <div class="endpoint">
             <h2>📥 GET /students</h2>
             <button onclick="getStudents()">Fetch Students</button>
-            <div id="getResponse" class="response"></div>
+            <pre id="getResponse"></pre>
         </div>
 
-        <div class="section">
+        <div class="endpoint">
             <h2>➕ POST /students</h2>
-            <textarea id="postData">{ "name": "Alice", "age": 23 }</textarea>
+            <textarea id="postBody">{{"name": "Alice", "age": 23}}</textarea>
             <button onclick="postStudent()">Create Student</button>
-            <div id="postResponse" class="response"></div>
+            <pre id="postResponse"></pre>
         </div>
 
-        <div class="section">
+        <div class="endpoint">
             <h2>✏️ PUT /students/&lt;id&gt;</h2>
-            <input type="text" id="putId" placeholder="Student ID">
-            <textarea id="putData">{ "name": "Bob", "age": 24 }</textarea>
+            <input id="putId" placeholder="Student ID (e.g. 1)" />
+            <textarea id="putBody">{{"name": "Bob", "age": 24}}</textarea>
             <button onclick="putStudent()">Update Student</button>
-            <div id="putResponse" class="response"></div>
+            <pre id="putResponse"></pre>
         </div>
 
-        <div class="section">
+        <div class="endpoint">
             <h2>🗑️ DELETE /students/&lt;id&gt;</h2>
-            <input type="text" id="deleteId" placeholder="Student ID">
+            <input id="deleteId" placeholder="Student ID (e.g. 1)" />
             <button onclick="deleteStudent()">Delete Student</button>
-            <div id="deleteResponse" class="response"></div>
+            <pre id="deleteResponse"></pre>
         </div>
 
-        <div class="section">
+        <div class="endpoint">
             <h2>🔍 GET /students/&lt;id&gt;</h2>
-            <input type="text" id="getById" placeholder="Student ID">
-            <button onclick="getStudentById()">Get Student</button>
-            <div id="getByIdResponse" class="response"></div>
+            <input id="getOneId" placeholder="Student ID (e.g. 1)" />
+            <button onclick="getStudent()">Get Student</button>
+            <pre id="getOneResponse"></pre>
         </div>
-
-        <footer>
-            &copy; 2025 Student API | Flask-powered RESTful Service
-        </footer>
 
         <script>
-            const base = "{{ url }}";
+            const BASE = '{BASE_URL}';
 
-            function getStudents() {
-                fetch(base + "/students")
-                    .then(res => res.json())
-                    .then(data => {
-                        document.getElementById("getResponse").innerText = JSON.stringify(data, null, 2);
-                    });
-            }
+            async function getStudents() {{
+                const res = await fetch(`${{BASE}}/students`);
+                const data = await res.json();
+                document.getElementById('getResponse').textContent = JSON.stringify(data, null, 2);
+            }}
 
-            function postStudent() {
-                const body = document.getElementById("postData").value;
-                fetch(base + "/students", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: body
-                })
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById("postResponse").innerText = JSON.stringify(data, null, 2);
-                });
-            }
+            async function postStudent() {{
+                const body = JSON.parse(document.getElementById('postBody').value);
+                const res = await fetch(`${{BASE}}/students`, {{
+                    method: 'POST',
+                    headers: {{ 'Content-Type': 'application/json' }},
+                    body: JSON.stringify(body)
+                }});
+                const data = await res.json();
+                document.getElementById('postResponse').textContent = JSON.stringify(data, null, 2);
+            }}
 
-            function putStudent() {
-                const id = document.getElementById("putId").value;
-                const body = document.getElementById("putData").value;
-                fetch(base + "/students/" + id, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: body
-                })
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById("putResponse").innerText = JSON.stringify(data, null, 2);
-                });
-            }
+            async function putStudent() {{
+                const id = document.getElementById('putId').value;
+                const body = JSON.parse(document.getElementById('putBody').value);
+                const res = await fetch(`${{BASE}}/students/${{id}}`, {{
+                    method: 'PUT',
+                    headers: {{ 'Content-Type': 'application/json' }},
+                    body: JSON.stringify(body)
+                }});
+                const data = await res.json();
+                document.getElementById('putResponse').textContent = JSON.stringify(data, null, 2);
+            }}
 
-            function deleteStudent() {
-                const id = document.getElementById("deleteId").value;
-                fetch(base + "/students/" + id, {
-                    method: "DELETE"
-                })
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById("deleteResponse").innerText = JSON.stringify(data, null, 2);
-                });
-            }
+            async function deleteStudent() {{
+                const id = document.getElementById('deleteId').value;
+                const res = await fetch(`${{BASE}}/students/${{id}}`, {{
+                    method: 'DELETE'
+                }});
+                const data = await res.json();
+                document.getElementById('deleteResponse').textContent = JSON.stringify(data, null, 2);
+            }}
 
-            function getStudentById() {
-                const id = document.getElementById("getById").value;
-                fetch(base + "/students/" + id)
-                    .then(res => res.json())
-                    .then(data => {
-                        document.getElementById("getByIdResponse").innerText = JSON.stringify(data, null, 2);
-                    });
-            }
+            async function getStudent() {{
+                const id = document.getElementById('getOneId').value;
+                const res = await fetch(`${{BASE}}/students/${{id}}`);
+                const data = await res.json();
+                document.getElementById('getOneResponse').textContent = JSON.stringify(data, null, 2);
+            }}
         </script>
     </body>
     </html>
     """
-    return render_template_string(html, url=request.host_url.rstrip('/'))
+    return render_template_string(html)
+
 
 
 
