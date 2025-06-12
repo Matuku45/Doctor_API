@@ -10,6 +10,11 @@ CORS(app)
 students = [{'id': 1, 'name': 'John', 'age': 20}]
 next_id = 2
 
+@app.route('/')
+def home():
+    return "Welcome to the Student API!"
+
+
 @app.route('/students', methods=['POST'])
 def create_student():
     global next_id
