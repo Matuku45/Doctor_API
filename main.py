@@ -12,7 +12,18 @@ next_id = 2
 
 @app.route('/')
 def home():
-    return "Welcome this is my first testing of an API  orhhhhh"
+    return jsonify({
+        'status': 'success',
+        'message': '🎉 Welcome to the Student Management API!',
+        'routes': {
+            'GET /students': 'List all students',
+            'POST /students': 'Add a new student',
+            'GET /students/<id>': 'Get a specific student by ID',
+            'PUT /students/<id>': 'Update a student by ID',
+            'DELETE /students/<id>': 'Delete a student by ID'
+        }
+    })
+
 
 
 @app.route('/students', methods=['POST'])
